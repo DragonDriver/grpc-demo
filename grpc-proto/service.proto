@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package milvus.proto.service;
+option go_package="github.com/zilliztech/milvus-distributed/internal/proto/servicepb";
 
 import "common.proto";
 import "service_msg.proto";
