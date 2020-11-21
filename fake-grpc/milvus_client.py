@@ -26,13 +26,30 @@ def run():
     with grpc.insecure_channel('localhost:19530') as channel:
         # stub = helloworld_pb2_grpc.GreeterStub(channel)
         # response = stub.SayHello(helloworld_pb2.HelloRequest(name='you'))
+        name = "test"
+
         stub = service_pb2_grpc.MilvusServiceStub(channel)
-        resp = stub.HasCollection(service_msg_pb2.CollectionName(collection_name="test"))
+
+        resp = stub.HasCollection(service_msg_pb2.CollectionName(collection_name=name))
         print(resp)
         if resp.value:
-            resp = stub.DropCollection(service_msg_pb2.CollectionName(collection_name="test"))
+            resp = stub.DropCollection(service_msg_pb2.CollectionName(collection_name=name))
             print(resp)
-        resp = stub.CreateCollection(schema_pb2.CollectionSchema(name="test"))
+
+        field0 = schema_pb2.FieldSchema()
+        field0.name = "int"
+        field0.data_type = schema_pb2.DataType.INT32
+        field1 = schema_pb2.FieldSchema()
+        field1.name = "vec"
+        field1.data_type = schema_pb2.DataType.VECTOR_FLOAT
+        schema = schema_pb2.CollectionSchema()
+        schema.name = name
+        schema.autoID = True
+        schema.fields.extend([field0, field1])
+        resp = stub.CreateCollection(schema)
+        print(resp)
+
+        resp = stub.DescribeCollection(service_msg_pb2.CollectionName(collection_name=name))
         print(resp)
 
 
